@@ -6,6 +6,7 @@ import os
 import logging
 from datetime import datetime
 from speedtestexecuter import run_speedtest
+from extractmetrics import process_all_json_files
 
 
 def setup_logging():
@@ -36,8 +37,21 @@ def main():
     logging.info("Speed exporter starting...")
     
     try:
+        #delete all file in speedtestraw
+        for f in os.listdir("speedtestraw"):
+            os.remove(os.path.join("speedtestraw", f))
+
         run_speedtest()
         logging.info("Speed exporter completed successfully")
+
+
+        #delete all file in speedtestmetrics
+        for f in os.listdir("speedtestmetrics"):
+            os.remove(os.path.join("speedtestmetrics", f))
+
+        process_all_json_files()
+        logging.info("Metrics extraction completed successfully")
+
     except Exception as e:
         logging.error(f"Speed exporter failed: {e}")
         raise

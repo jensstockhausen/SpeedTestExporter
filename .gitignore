@@ -10,6 +10,7 @@ Thumbs.db
 
 # Logs
 speedtestraw/
+speedtestmetrics/
 log/
 
 # Environment variables
