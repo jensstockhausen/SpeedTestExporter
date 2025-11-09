@@ -88,12 +88,20 @@ crontab -e
 
 Run every 30 minutes:
 ```cron
-*/30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+*/30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /home/user/speedtestexporter/log/cron.log 2>&1
 ```
 
 Run at :00 and :30 of each hour:
 ```cron
-0,30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+0,30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /home/user/speedtestexporter/log/cron.log 2>&1
+```
+
+### Injestion in a prometheus instance
+
+Use the standard node_exporter and point to the metrics folder:
+
+```
+./node_exporter --collector.textfile.directory=/home/user/speedtestexporter/speedtestmetrics
 ```
 
 ## Configuration
@@ -152,4 +160,3 @@ Converts speedtest JSON to Prometheus format:
 - Extracts key metrics
 - Generates Prometheus-compatible output
 - Can process single files or batch process directory
-
