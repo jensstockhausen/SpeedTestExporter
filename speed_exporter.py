@@ -6,6 +6,7 @@ import os
 import logging
 from datetime import datetime
 from speedtestexecuter import run_speedtest
+from dotenv import load_dotenv
 from extractmetrics import process_all_json_files
 
 
@@ -36,19 +37,34 @@ def main():
     setup_logging()
     logging.info("Speed exporter starting...")
     
+    # Load environment variables from .env file
+    load_dotenv()
+    
+    # Get interfaces from environment variable
+    interfaces_str = os.getenv('INTERFACES', 'en0')
+    interfaces = [iface.strip() for iface in interfaces_str.split(',')]
+    
+    logging.info(f"Testing interfaces: {interfaces}")
+    
     try:
-        #delete all file in speedtestraw
-        for f in os.listdir("speedtestraw"):
-            os.remove(os.path.join("speedtestraw", f))
+        # Delete all files in speedtestraw
+        if os.path.exists("speedtestraw"):
+            for f in os.listdir("speedtestraw"):
+                os.remove(os.path.join("speedtestraw", f))
 
-        run_speedtest()
+        # Run speedtest for each interface
+        for interface in interfaces:
+            logging.info(f"Running speedtest for interface: {interface}")
+            run_speedtest(interface)
+        
         logging.info("Speed exporter completed successfully")
 
+        # Delete all files in speedtestmetrics
+        if os.path.exists("speedtestmetrics"):
+            for f in os.listdir("speedtestmetrics"):
+                os.remove(os.path.join("speedtestmetrics", f))
 
-        #delete all file in speedtestmetrics
-        for f in os.listdir("speedtestmetrics"):
-            os.remove(os.path.join("speedtestmetrics", f))
-
+        # Process all JSON files to generate metrics
         process_all_json_files()
         logging.info("Metrics extraction completed successfully")
 
