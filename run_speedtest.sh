@@ -9,10 +9,10 @@
 # 2. Edit your crontab: crontab -e
 # 3. Add the following line (adjust path as needed):
 #
-#    */30 * * * * /home/name/speedtest/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+#    */30 * * * * /home/user/speedtest/run_speedtest.sh >> /home/user/speedtest/log/cron.log 2>&1
 #
 # Alternative: Run at specific minutes (0 and 30 of each hour):
-#    0,30 * * * * /home/user/speedtest/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+#    0,30 * * * * /home/user/speedtest/run_speedtest.sh >> /home/user/speedtest/log/cron.log 2>&1
 #
 # Cron syntax explanation:
 # */30 * * * * means: every 30 minutes

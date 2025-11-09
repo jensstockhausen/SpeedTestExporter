@@ -17,3 +17,6 @@ log/
 # Environment variables
 .env
 .env.local
+
+# cli tool
+speedtest
