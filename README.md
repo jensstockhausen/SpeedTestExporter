@@ -88,12 +88,12 @@ crontab -e
 
 Run every 30 minutes:
 ```cron
-*/30 * * * * /Users/jens/Develop/speedtest/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+*/30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
 ```
 
 Run at :00 and :30 of each hour:
 ```cron
-0,30 * * * * /Users/jens/Develop/speedtest/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
+0,30 * * * * /home/user/speedtestexporter/run_speedtest.sh >> /Users/jens/Develop/speedtest/log/cron.log 2>&1
 ```
 
 ## Configuration
@@ -153,55 +153,3 @@ Converts speedtest JSON to Prometheus format:
 - Generates Prometheus-compatible output
 - Can process single files or batch process directory
 
-## Dependencies
-
-- `python-dotenv==1.0.0` - Environment variable management
-
-## Development
-
-### Code Style
-- Follows PEP 8 style guidelines
-- Uses type hints where appropriate
-- Includes docstrings for functions and classes
-
-### Testing
-Run a test execution:
-```bash
-source .venv/bin/activate
-python3 speed_exporter.py
-```
-
-Check the output in:
-- `speedtestraw/` for JSON results
-- `speedtestmetrics/` for Prometheus metrics
-- `log/` for execution logs
-
-## Troubleshooting
-
-### Speedtest CLI not found
-Ensure speedtest CLI is installed:
-```bash
-# macOS
-brew install speedtest-cli
-```
-
-### Permission denied
-If running speedtest requires sudo, you may need to configure passwordless sudo for the speedtest command or run the script with appropriate permissions.
-
-### Interface not found
-List available network interfaces:
-```bash
-networksetup -listallhardwareports
-# or
-ifconfig
-```
-
-Update `.env` with valid interface names.
-
-## License
-
-MIT License - feel free to use and modify as needed.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
