@@ -29,7 +29,7 @@ def run_speedtest(interface: str = "en0") -> str:
     output_file = os.path.join(output_dir, f"speedtest_{timestamp}.json")
     
     # Run speedtest command
-    cmd = ["speedtest", "-p", "no", "-f", "json-pretty", "-I", interface]
+    cmd = ["speedtest", "--accept-gdpr", "-p", "no", "-f", "json-pretty", "-I", interface]
     logging.info(f"Running command: {' '.join(cmd)}")
     
     try:
