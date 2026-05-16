@@ -7,6 +7,8 @@ import os
 import logging
 from datetime import datetime
 
+logger = logging.getLogger(__name__)
+
 
 def run_speedtest(interface: str = "en0") -> str:
     """
@@ -18,7 +20,7 @@ def run_speedtest(interface: str = "en0") -> str:
     Returns:
         Path to the output file
     """
-    logging.info(f"Starting speedtest on interface: {interface}")
+    logger.info("Starting speedtest on interface: %s", interface)
     
     # Create speedtestraw directory if it doesn't exist
     output_dir = "speedtestraw"
@@ -30,23 +32,25 @@ def run_speedtest(interface: str = "en0") -> str:
     
     # Run speedtest command
     cmd = ["speedtest", "--accept-gdpr", "-p", "no", "-f", "json-pretty", "-I", interface]
-    logging.info(f"Running command: {' '.join(cmd)}")
+    logger.info("Running command: %s", ' '.join(cmd))
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         
+        logger.debug("Speedtest stdout (%d bytes): %.200s", len(result.stdout), result.stdout)
+
         # Write stdout to file
         with open(output_file, "w") as f:
             f.write(result.stdout)
         
-        logging.info(f"Speedtest results saved to: {output_file}")
+        logger.info("Speedtest results saved to: %s", output_file)
         return output_file
         
     except subprocess.CalledProcessError as e:
-        logging.error(f"Error running speedtest: {e}")
+        logger.error("Error running speedtest: %s", e, exc_info=True)
         if e.stderr:
-            logging.error(f"Error output: {e.stderr}")
+            logger.error("Error output: %s", e.stderr)
         raise
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        logger.error("Unexpected error: %s", e, exc_info=True)
         raise
