@@ -8,6 +8,8 @@ import logging
 from datetime import datetime
 from typing import Dict, Any
 
+logger = logging.getLogger(__name__)
+
 
 def parse_speedtest_json(json_file: str) -> Dict[str, Any]:
     """
@@ -19,7 +21,7 @@ def parse_speedtest_json(json_file: str) -> Dict[str, Any]:
     Returns:
         Dictionary containing extracted metrics
     """
-    logging.info(f"Parsing JSON file: {json_file}")
+    logger.info("Parsing JSON file: %s", json_file)
     
     try:
         with open(json_file, 'r') as f:
@@ -42,14 +44,22 @@ def parse_speedtest_json(json_file: str) -> Dict[str, Any]:
             'timestamp': data.get('timestamp', datetime.now().isoformat())
         }
         
-        logging.info(f"Extracted metrics: download={metrics['download_bandwidth']}, upload={metrics['upload_bandwidth']}")
+        logger.info(
+            "Extracted metrics: download=%s, upload=%s",
+            metrics['download_bandwidth'], metrics['upload_bandwidth']
+        )
+        logger.debug(
+            "Full metrics: ping_latency=%s, ping_jitter=%s, packet_loss=%s, isp=%s, interface=%s",
+            metrics['ping_latency'], metrics['ping_jitter'], metrics['packet_loss'],
+            metrics['isp'], metrics['interface']
+        )
         return metrics
         
     except json.JSONDecodeError as e:
-        logging.error(f"Error parsing JSON file {json_file}: {e}")
+        logger.error("Error parsing JSON file %s: %s", json_file, e, exc_info=True)
         raise
     except Exception as e:
-        logging.error(f"Unexpected error reading {json_file}: {e}")
+        logger.error("Unexpected error reading %s: %s", json_file, e, exc_info=True)
         raise
 
 
@@ -61,7 +71,7 @@ def convert_to_prometheus(metrics: Dict[str, Any], output_file: str):
         metrics: Dictionary containing metrics
         output_file: Path to output file
     """
-    logging.info(f"Converting metrics to Prometheus format")
+    logger.info("Converting metrics to Prometheus format")
     
     # Create Prometheus metrics content
     prometheus_metrics = []
@@ -107,10 +117,10 @@ def convert_to_prometheus(metrics: Dict[str, Any], output_file: str):
             f.write('\n'.join(prometheus_metrics))
             f.write('\n')
         
-        logging.info(f"Prometheus metrics written to: {output_file}")
+        logger.info("Prometheus metrics written to: %s", output_file)
         
     except Exception as e:
-        logging.error(f"Error writing Prometheus metrics to {output_file}: {e}")
+        logger.error("Error writing Prometheus metrics to %s: %s", output_file, e, exc_info=True)
         raise
 
 
@@ -153,13 +163,13 @@ def process_all_json_files(input_dir: str = "speedtestraw") -> list:
         List of output file paths
     """
     if not os.path.exists(input_dir):
-        logging.warning(f"Input directory {input_dir} does not exist")
+        logger.warning("Input directory %s does not exist", input_dir)
         return []
     
     output_files = []
     json_files = [f for f in os.listdir(input_dir) if f.endswith('.json')]
     
-    logging.info(f"Found {len(json_files)} JSON files to process")
+    logger.info("Found %d JSON files to process", len(json_files))
     
     for json_file in json_files:
         full_path = os.path.join(input_dir, json_file)
@@ -167,18 +177,17 @@ def process_all_json_files(input_dir: str = "speedtestraw") -> list:
             output_file = extract_metrics(full_path)
             output_files.append(output_file)
         except Exception as e:
-            logging.error(f"Failed to process {json_file}: {e}")
+            logger.error("Failed to process %s: %s", json_file, e)
             continue
     
-    logging.info(f"Successfully processed {len(output_files)} files")
+    logger.info("Successfully processed %d files", len(output_files))
     return output_files
 
 
 if __name__ == "__main__":
-    # Setup basic logging for standalone execution
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
     
     process_all_json_files()
